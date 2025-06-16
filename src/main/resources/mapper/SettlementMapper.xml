@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.trading.settlement.mapper.SettlementMapper">
+    <select id="selectMerchantIds" resultType="java.lang.Long">
+        SELECT DISTINCT merchant_id FROM merchant_accounts
+    </select>
+    
+    <select id="calculateTotalSales" resultType="java.math.BigDecimal">
+        SELECT COALESCE(SUM(total_amount), 0) 
+        FROM orders 
+        WHERE merchant_id = #{merchantId} 
+        AND created_at BETWEEN CONCAT(#{date}, ' 00:00:00') AND CONCAT(#{date}, ' 23:59:59')
+    </select>
+    
+    <select id="calculateActualIncome" resultType="java.math.BigDecimal">
+        SELECT COALESCE(SUM(amount), 0)
+        FROM merchant_account_transactions
+        WHERE account_id IN (SELECT account_id FROM merchant_accounts WHERE merchant_id = #{merchantId})
+        AND created_at BETWEEN CONCAT(#{date}, ' 00:00:00') AND CONCAT(#{date}, ' 23:59:59')
+    </select>
+    
+    <insert id="insertSettlement" parameterType="com.example.trading.settlement.model.Settlement">
+        INSERT INTO settlements 
+        (merchant_id, settlement_date, total_sales, actual_income, status)
+        VALUES 
+        (#{merchantId}, #{settlementDate}, #{totalSales}, #{actualIncome}, #{status})
+    </insert>
+    
+    <update id="updateMerchantStatus">
+        UPDATE merchant_accounts
+        SET settlement_status = #{status}
+        WHERE merchant_id = #{merchantId}
+    </update>
+
+    <delete id="deleteSettlements">
+        DELETE FROM settlements
+    </delete>
+</mapper>

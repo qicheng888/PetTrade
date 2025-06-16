@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.trading.inventory.mapper.InventoryMapper">
+    <insert id="insertProduct">
+        INSERT INTO products
+        (product_id, sku, name, price, stock_quantity, merchant_id)
+        VALUES
+        (#{productId}, #{sku}, #{name}, #{price}, #{stockQuantity}, #{merchantId})
+    </insert>
+
+    <update id="updateStockQuantity">
+        UPDATE products
+        SET stock_quantity = #{quantity}
+        WHERE product_id = #{productId}
+    </update>
+
+    <update id="updateProductStock">
+        UPDATE products
+        SET stock_quantity = #{stockQuantity}
+        WHERE product_id = #{productId}
+    </update>
+
+    <insert id="insertInventoryTransaction">
+        INSERT INTO inventory_transactions
+        (product_id, change_quantity, type)
+        VALUES
+        (#{productId}, #{quantity}, #{type})
+    </insert>
+</mapper>

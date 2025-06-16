@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.trading.account.mapper.AccountMapper">
+    <select id="selectUserAccount" resultType="com.example.trading.account.model.UserAccount">
+        SELECT * FROM user_accounts WHERE user_id = #{userId}
+    </select>
+
+    <select id="selectMerchantAccount" resultType="com.example.trading.account.model.MerchantAccount">
+        SELECT * FROM merchant_accounts WHERE merchant_id = #{merchantId}
+    </select>
+
+    <insert id="insertUserAccount" keyProperty="accountId" useGeneratedKeys="true" parameterType="com.example.trading.account.model.UserAccount">
+        INSERT INTO user_accounts 
+        (user_id, balance, currency)
+        VALUES 
+        (#{userId}, #{balance}, #{currency})
+    </insert>
+
+    <insert id="insertMerchantAccount" keyProperty="accountId" useGeneratedKeys="true" parameterType="com.example.trading.account.model.MerchantAccount">
+        INSERT INTO merchant_accounts
+        (merchant_id, balance, settlement_status)
+        VALUES
+        (#{merchantId}, #{balance}, #{settlementStatus})
+    </insert>
+
+    <delete id="deleteMerchantAccount">
+        DELETE FROM merchant_accounts WHERE merchant_id = #{merchantId}
+    </delete>
+
+    <update id="updateUserAccount">
+        UPDATE user_accounts
+        SET balance = #{balance}
+        WHERE user_id = #{userId}
+    </update>
+
+    <update id="updateMerchantAccount">
+        UPDATE merchant_accounts
+        SET balance = #{balance}
+        WHERE merchant_id = #{merchantId}
+    </update>
+
+    <insert id="insertUserAccountTransaction" keyProperty="transactionId" useGeneratedKeys="true" parameterType="com.example.trading.account.model.UserAccountTransaction">
+        INSERT INTO user_account_transactions
+        (account_id, amount, type, order_id)
+        VALUES
+        (#{accountId}, #{amount}, #{type}, #{orderId})
+    </insert>
+
+    <select id="selectTransactionsByUserId" resultType="com.example.trading.account.model.UserAccountTransaction">
+        SELECT * FROM user_account_transactions WHERE account_id = (SELECT account_id FROM user_accounts WHERE user_id = #{userId})
+    </select>
+
+    <insert id="insertMerchantAccountTransaction" keyProperty="transactionId" useGeneratedKeys="true" parameterType="com.example.trading.account.model.MerchantAccountTransaction">
+        INSERT INTO merchant_account_transactions
+        (account_id, amount, type, order_id)
+        VALUES
+        (#{accountId}, #{amount}, #{type}, #{orderId})
+    </insert>
+
+    <select id="selectTransactionsByMerchantId" resultType="com.example.trading.account.model.MerchantAccountTransaction">
+        SELECT * FROM merchant_account_transactions WHERE account_id = (SELECT account_id FROM merchant_accounts WHERE merchant_id = #{merchantId})
+    </select>
+
+</mapper>
