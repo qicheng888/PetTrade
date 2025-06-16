@@ -52,7 +52,7 @@ com.example.trading.order.service.OrderServiceTest
 
 ```
 
-执行集成测试的方法如下：
+## 执行集成测试
 
 ```
 mvn test -Dtest=com.example.trading.account.controller.AccountControllerTest,\
